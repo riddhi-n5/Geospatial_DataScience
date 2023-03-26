@@ -1,0 +1,122 @@
+---
+title: "CIVE_Homework"
+author: "Riddhi Narayan"
+date: '2022-03-25'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+```
+
+
+##Question 1
+```{r cars}
+#Load the forecast package
+library(forecast)
+    
+# Set up variables
+set.seed(1234)
+n <- 1000
+x <- matrix(0,1000,1)
+w <- rnorm(n)
+
+# loop to create x
+for (t in 2:n){
+  if(x[t-1] < 0.7){
+    x[t] <- 0.9 * x[t-1] + w[t]
+  }else{
+  x[t] <- -0.5 * x[t-1] + w[t]
+  }
+}
+plot(x,type='l', main='TAR model')
+
+```
+
+
+```{r}
+#autocorrelation plot
+acf(x, lag.max = 1 ,plot=TRUE)
+```
+#Mean and SD for Question1
+
+```{r pressure, echo=FALSE}
+mean(x)
+sd(x)
+```
+###Question 2
+```{r}
+#Question 2
+#Generate TFN model 
+# Set up variables
+set.seed(1234)
+n <- 1000
+x <- matrix(0,1000,1)
+y <- matrix(0,1000, 1)
+w <- rnorm(n)
+
+# loop to create x
+for (t in 2:n){
+  x[t] = -0.9 * x[t-1] + w[t] 
+  y[t] <-0.2 *x[t] + 0.5 * x[t-1] + w[t]
+}
+plot(y,type='l', main='TFN model')
+
+#Mean and SD for Question2
+mean(y)
+sd(y)
+acf(y, max.lag=1, plot=TRUE)
+```
+##Question 3
+```{r}
+#Question 3
+#Generate 3 (AR) models 
+# Set up variables
+set.seed(1234)
+n <- 1000
+x <- matrix(0,1000,1)
+y <- matrix(0,1000, 1)
+ar3 <- matrix(0,1000,1)
+w <- rnorm(n) #error term
+
+# loop to create AR(1)
+for (t in 2:n){
+  x[t] = -0.75 * x[t-1] + w[t] 
+  #y[t] <-0.2 *x[t] + 0.5 * x[t-1] + w[t]
+}
+plot(x,type='l', main='AR1')
+
+acf(x, max.lag=1, plot=TRUE)
+
+
+#to create AR(2)
+for (t in 3:n){
+  y[t] = 0.25*y[t-1] + 0.39*y[t-2] + w[t]
+}
+
+plot(y,type='l', main='AR(2)')
+
+acf(y, max.lag=1, plot=TRUE)
+
+
+#plot AR(1) + AR(2)
+for (t in 1:n){
+  ar3[t] = x[t] + y[t]
+}
+plot(ar3, type='l', main='AR(1) + AR(2)')
+acf(ar3, max.lag=1, plot=TRUE)
+
+```
+#Looking at the 'AR(1) + AR(2) plot above and it's corresponding ACF plot, we can deduce that there is some new information added. The plot is more dense and the acf plot shows a lesser correlation with previous values.
